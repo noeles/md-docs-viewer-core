@@ -1,0 +1,52 @@
+{
+    "name": "md-docs-viewer/core",
+    "description": "Framework-agnostic Markdown docs viewer with Mermaid flowcharts and mindmap layout (PSR-15)",
+    "type": "library",
+    "license": "MIT",
+    "keywords": ["markdown", "mermaid", "docs", "viewer", "psr-15"],
+    "homepage": "https://github.com/noeles/md-docs-viewer",
+    "authors": [
+        {
+            "name": "noal",
+            "email": "1599934840@qq.com"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/noeles/md-docs-viewer/issues",
+        "source": "https://github.com/noeles/md-docs-viewer"
+    },
+    "require": {
+        "php": "^7.4|^8.0",
+        "psr/http-message": "^1.0|^2.0",
+        "psr/http-server-handler": "^1.0",
+        "psr/http-server-middleware": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.6",
+        "nyholm/psr7": "^1.8",
+        "nyholm/psr7-server": "^1.1"
+    },
+    "suggest": {
+        "nyholm/psr7": "PSR-7 implementation for md-docs-serve CLI",
+        "nyholm/psr7-server": "Convert globals to PSR-7 for md-docs-serve CLI"
+    },
+    "autoload": {
+        "psr-4": {
+            "MdDocsViewer\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "MdDocsViewer\\Tests\\": "tests/"
+        }
+    },
+    "bin": [
+        "bin/md-docs-serve"
+    ],
+    "extra": {
+        "branch-alias": {
+            "dev-main": "1.0-dev"
+        }
+    },
+    "minimum-stability": "stable"
+}

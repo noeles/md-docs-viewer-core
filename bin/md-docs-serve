@@ -1,0 +1,62 @@
+#!/usr/bin/env php
+<?php
+
+if (PHP_SAPI !== 'cli') {
+    fwrite(STDERR, "md-docs-serve must be run from CLI\n");
+    exit(1);
+}
+
+$autoloadCandidates = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../vendor/autoload.php',
+    __DIR__ . '/../../../../vendor/autoload.php',
+];
+$loaded = false;
+foreach ($autoloadCandidates as $file) {
+    if (is_file($file)) {
+        require $file;
+        $loaded = true;
+        break;
+    }
+}
+if (!$loaded) {
+    fwrite(STDERR, "Composer autoload not found. Run composer install first.\n");
+    exit(1);
+}
+
+use MdDocsViewer\Config\ViewerConfig;
+
+$options = getopt('', ['doc-root:', 'port::', 'prefix::', 'title::', 'host::', 'help']);
+if (isset($options['help']) || empty($options['doc-root'])) {
+    echo "Usage: md-docs-serve --doc-root=PATH [--host=127.0.0.1] [--port=8080] [--prefix=/docs] [--title=文档预览]\n";
+    exit(isset($options['help']) ? 0 : 1);
+}
+
+$docRoot = realpath($options['doc-root']);
+if ($docRoot === false || !is_dir($docRoot)) {
+    fwrite(STDERR, "doc-root not found: {$options['doc-root']}\n");
+    exit(1);
+}
+
+$host = $options['host'] ?? '127.0.0.1';
+$port = isset($options['port']) ? (int)$options['port'] : 8080;
+$prefix = $options['prefix'] ?? '/docs';
+$title = $options['title'] ?? '文档预览';
+$normalizedPrefix = ViewerConfig::normalizePrefix($prefix);
+
+putenv('MD_DOCS_ROOT=' . $docRoot);
+putenv('MD_DOCS_PREFIX=' . $normalizedPrefix);
+putenv('MD_DOCS_TITLE=' . $title);
+
+$router = __DIR__ . '/serve-router.php';
+echo "md-docs-viewer serving {$docRoot}\n";
+echo "Open http://{$host}:{$port}{$normalizedPrefix}\n";
+
+$cmd = sprintf(
+    'php -S %s:%d -t %s %s',
+    $host,
+    $port,
+    escapeshellarg(dirname($router)),
+    escapeshellarg($router)
+);
+passthru($cmd);
