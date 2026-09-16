@@ -239,7 +239,7 @@
           }
           return '<div class="kd-mm-group">' +
             '<div class="kd-mm-group-title">' + escapeHtml(child.text) + '</div>' +
-            renderMindmapSubtree(child.children) +
+            '<div class="kd-mm-content">' + renderMindmapSubtree(child.children) + '</div>' +
             '</div>';
         }).join('');
       }
